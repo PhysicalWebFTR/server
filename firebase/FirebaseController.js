@@ -1,11 +1,13 @@
 const db = require('./Firebase')
+const RestaurantCollection = db.collection('Restaurants')
+const OrderCollection = db.collection('Orders')
 
 class Firebase {
 
   static getRestaurantData(restaurantId) {
     return new Promise(function (resolve, reject) {
 
-      var restaurantRef = db.collection('Restaurants').doc(restaurantId);
+      var restaurantRef = RestaurantCollection.doc(restaurantId);
 
       const arrPromise = [
         restaurantRef.get(),
@@ -59,7 +61,6 @@ class Firebase {
 
   static createOrder(orderData) {
     return new Promise(function (resolve, reject) {
-      const OrderCollection = db.collection('Orders')
       OrderCollection.add({
         idCustomer: orderData.idCustomer,
         idRestaurant: orderData.idRestaurant,
@@ -90,6 +91,9 @@ class Firebase {
     })
   }
 
+  static deleteCollection(restaurantId){
+    RestaurantCollection.doc(restaurantId).delete();
+  }
 }
 
 module.exports = Firebase

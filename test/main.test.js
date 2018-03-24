@@ -5,12 +5,11 @@ const expect = chai.expect;
 
 const idRestaurant = 'UwtUW7ny5SPbbCWE8rWv'
 
-describe('Restaurant Data', function () {
+describe('Request Firebase Data', function () {
 
-  describe('Success Get Restaurant Data', function () {
+  describe('Restaurant Data', function () {
 
-    it('Status Code : 200', function (done) {
-
+    it('Success Get Restaurant Data', function (done) {
       FirebaseDB.getRestaurantData(idRestaurant)
         .then((data) => {
           console.log(data)
@@ -32,9 +31,21 @@ describe('Restaurant Data', function () {
           console.error('eror Firebase', err)
         })
 
-    });
+    }).timeout(0);
 
   })
 
+
+  // describe('Order', function () {
+
+  //   it('Success Create Order Data', function (done) {
+
+  //   }).timeout(0);
+
+  //   it('Success Delete Order Data', function (done) {
+
+  //   }).timeout(0);
+
+  // })
 
 });
