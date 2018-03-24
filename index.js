@@ -3,6 +3,7 @@ const Pusher = require('pusher'); // for pushing real-time updates to clients
 const dateFormat = require('dateformat'); // for formatting dates
 
 const FirebaseDB = require('./firebase/FirebaseController')
+const Constants = require('./Constants')
 
 const PERIPHERAL_ID = `${process.env.PERIPHERAL_ID}`;
 const PRIMARY_SERVICE_ID = `${process.env.PRIMARY_SERVICE_ID}`;
@@ -63,11 +64,12 @@ bleno.on('advertisingStart', function (error) {
             FirebaseDB.createOrder(data)
               .then((data) => {
                 console.log('Success Create Order Firebase', data)
-                pusher.trigger(process.env.CHANNEL_NAME, process.env.EVENT_NAME, data)
+                pusher.trigger(process.env.CHANNEL_NAME, Constants.EVENT_ORDER, data)
                 callback(this.RESULT_SUCCESS)
               })
               .catch((err) => {
                 console.error('Failed Create Order Firebase', err)
+                pusher.trigger(process.env.CHANNEL_NAME, Constants.EVENT_FAILED_CREATE_ORDER, err)
                 // callback(this.RESULT_FAILED)
               })
 
@@ -84,10 +86,11 @@ bleno.on('accept', function (clientAddress) {
 
   FirebaseDB.getRestaurantData(process.env.RESTAURANT_ID)
     .then((data) => {
-      pusher.trigger(data.name, process.env.EVENT_NAME, data);
+      pusher.trigger(process.env.RESTAURANT_NAME, Constants.EVENT_GET_DATA_RESTAURANT, data);
     })
     .catch((err) => {
       console.error('eror Firebase', err)
+      pusher.trigger(process.env.RESTAURANT_NAME, Constants.EVENT_FAILED_GET_RESTAURANT, err);
     })
 
 });

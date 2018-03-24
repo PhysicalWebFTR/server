@@ -19,7 +19,7 @@ class Firebase {
           let snapshotMenu = data[1]
           let snapshotTableList = data[2]
 
-          let restaurantName = documentRestaurant.data()
+          let restaurantName = documentRestaurant.data().name
 
           let arrMenu = []
           snapshotMenu.forEach(doc => {
