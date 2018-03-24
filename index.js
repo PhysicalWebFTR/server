@@ -5,13 +5,14 @@ const dateFormat = require('dateformat'); // for formatting dates
 const FirebaseDB = require('./firebase/FirebaseController')
 const Constants = require('./Constants')
 
+require('dotenv').config();
+
+
 const PERIPHERAL_ID = `${process.env.PERIPHERAL_ID}`;
 const PRIMARY_SERVICE_ID = `${process.env.PRIMARY_SERVICE_ID}`;
 const PRIMARY_CHARACTERISTIC_ID = `${process.env.PRIMARY_CHARACTERISTIC_ID}`;
 const BASE_UUID = `${process.env.BASE_UUID}`;
 
-
-require('dotenv').config();
 
 
 var pusher = new Pusher({
@@ -34,15 +35,15 @@ bleno.on('stateChange', function (state) {
   }
 
   bleno.startAdvertising(
-    process.env.RESTAURANT_NAME,
+    `${process.env.RESTAURANT_NAME}`,
     [settings.service_id],
-    (err) => console.log(err)
+    (err) => console.error('Start Advertising error', err)
   )
 })
 
 bleno.on('advertisingStart', function (error) {
   if (error) {
-    console.log('Advertising Error..')
+    console.error('Advertising Error..')
     return
   }
 
@@ -86,11 +87,11 @@ bleno.on('accept', function (clientAddress) {
 
   FirebaseDB.getRestaurantData(process.env.RESTAURANT_ID)
     .then((data) => {
-      pusher.trigger(process.env.RESTAURANT_NAME, Constants.EVENT_GET_DATA_RESTAURANT, data);
+      pusher.trigger(`${process.env.RESTAURANT_NAME}`, Constants.EVENT_GET_DATA_RESTAURANT, data);
     })
     .catch((err) => {
       console.error('eror Firebase', err)
-      pusher.trigger(process.env.RESTAURANT_NAME, Constants.EVENT_FAILED_GET_RESTAURANT, err);
+      pusher.trigger(`${process.env.RESTAURANT_NAME}`, Constants.EVENT_FAILED_GET_RESTAURANT, err);
     })
 
 });
