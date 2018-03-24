@@ -44,7 +44,7 @@ bleno.on('advertisingStart', function (error) {
     console.log('Advertising Error..')
     return
   }
-  
+
   console.log('Advertising Start..');
 
   bleno.setServices([
@@ -63,12 +63,12 @@ bleno.on('advertisingStart', function (error) {
             FirebaseDB.createOrder(data)
               .then((data) => {
                 console.log('Success Create Order Firebase', data)
-                pusher.trigger('restaurant-channel', 'restaurant-event', data)
+                pusher.trigger(process.env.CHANNEL_NAME, process.env.EVENT_NAME, data)
                 callback(this.RESULT_SUCCESS)
               })
               .catch((err) => {
                 console.error('Failed Create Order Firebase', err)
-                callback(this.RESULT_FAILED)
+                // callback(this.RESULT_FAILED)
               })
 
           }
@@ -84,7 +84,7 @@ bleno.on('accept', function (clientAddress) {
 
   FirebaseDB.getRestaurantData(process.env.RESTAURANT_ID)
     .then((data) => {
-      pusher.trigger('restaurant-channel', 'restaurant-event', data);
+      pusher.trigger(process.env.CHANNEL_NAME, process.env.EVENT_NAME, data);
     })
     .catch((err) => {
       console.error('eror Firebase', err)
