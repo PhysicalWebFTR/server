@@ -4,10 +4,10 @@ const dateFormat = require('dateformat'); // for formatting dates
 
 const FirebaseDB = require('./firebase/FirebaseController')
 
-const PERIPHERAL_ID = process.env.PERIPHERAL_ID;
-const PRIMARY_SERVICE_ID = process.env.PRIMARY_SERVICE_ID;
-const PRIMARY_CHARACTERISTIC_ID = process.env.PRIMARY_CHARACTERISTIC_ID;
-const BASE_UUID = process.env.BASE_UUID;
+const PERIPHERAL_ID = `${process.env.PERIPHERAL_ID}`;
+const PRIMARY_SERVICE_ID = `${process.env.PRIMARY_SERVICE_ID}`;
+const PRIMARY_CHARACTERISTIC_ID = `${process.env.PRIMARY_CHARACTERISTIC_ID}`;
+const BASE_UUID = `${process.env.BASE_UUID}`;
 
 
 require('dotenv').config();
