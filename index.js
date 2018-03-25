@@ -5,6 +5,8 @@ const dateFormat = require('dateformat'); // for formatting dates
 const FirebaseDB = require('./firebase/FirebaseController')
 const Constants = require('./Constants')
 
+const CachedController = require('./cached/CachedController')
+
 require('dotenv').config();
 
 
@@ -12,8 +14,6 @@ const PERIPHERAL_ID = `${process.env.PERIPHERAL_ID}`;
 const PRIMARY_SERVICE_ID = `${process.env.PRIMARY_SERVICE_ID}`;
 const PRIMARY_CHARACTERISTIC_ID = `${process.env.PRIMARY_CHARACTERISTIC_ID}`;
 const BASE_UUID = `${process.env.BASE_UUID}`;
-
-
 
 var pusher = new Pusher({
   appId: process.env.APP_ID,
@@ -23,10 +23,21 @@ var pusher = new Pusher({
   encrypted: true
 })
 
-var settings = {
+const settings = {
   service_id: PERIPHERAL_ID + PRIMARY_SERVICE_ID + BASE_UUID,
   characteristic_id: PERIPHERAL_ID + PRIMARY_CHARACTERISTIC_ID + BASE_UUID
 }
+
+
+// FirebaseDB.getRestaurantImages(process.env.RESTAURANT_ID)
+// .then((data) => {
+//   console.log('size data : ', lengthInUtf8Bytes(JSON.stringify(data)))
+
+// })
+// .catch((err) => {
+//   console.error('eror Firebase', err)
+// })
+
 
 bleno.on('stateChange', function (state) {
   if (state !== 'poweredOn') {
@@ -85,14 +96,36 @@ bleno.on('advertisingStart', function (error) {
 
 bleno.on('accept', function (clientAddress) {
 
-  FirebaseDB.getRestaurantData(process.env.RESTAURANT_ID)
-    .then((data) => {
-      console.error('data Firebase : ', data)
-      pusher.trigger(`${process.env.CHANNEL_NAME}`, Constants.EVENT_GET_DATA_RESTAURANT, data);
-    })
-    .catch((err) => {
-      console.error('eror Firebase', err)
-      pusher.trigger(`${process.env.CHANNEL_NAME}`, Constants.EVENT_FAILED_GET_RESTAURANT, err);
-    })
+  // FirebaseDB.getRestaurantData(process.env.RESTAURANT_ID)
+  //   .then((data) => {
+  //     console.log('data Firebase : ', data)
+  //     pusher.trigger(`${process.env.CHANNEL_NAME}`, Constants.EVENT_GET_DATA_RESTAURANT, data);
+  //   })
+  //   .catch((err) => {
+  //     console.error('eror Firebase', err)
+  //     pusher.trigger(`${process.env.CHANNEL_NAME}`, Constants.EVENT_FAILED_GET_RESTAURANT, err);
+  //   })
 
 });
+
+
+function getRestaurantImages(){
+  FirebaseDB.getRestaurantImagesId(process.env.RESTAURANT_ID)
+    .then((data) => {
+      data.forEach((item) => {
+
+        FirebaseDB.getRestaurantImage(process.env.RESTAURANT_ID, item)
+          .then((imageData) => {
+            pusher.trigger(`${process.env.CHANNEL_NAME}`, Constants.EVENT_GET_DATA_RESTAURANT, imageData);
+
+          })
+          .catch((err) => {
+            pusher.trigger(`${process.env.CHANNEL_NAME}`, Constants.EVENT_FAILED_GET_RESTAURANT, err);
+          })
+
+      })
+    })
+    .catch((err) => {
+      console.error(err)
+    })
+}

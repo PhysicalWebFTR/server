@@ -1,8 +1,47 @@
 const db = require('./Firebase')
 const RestaurantCollection = db.collection('Restaurants')
+const ImageCollection = db.collection('Images')
 const OrderCollection = db.collection('Orders')
 
 class Firebase {
+
+  static getRestaurantImagesId(restaurantId) {
+
+    return new Promise(function (resolve, reject) {
+      var imageRef = ImageCollection.doc(restaurantId);
+      imageRef.collection("menu").get()
+        .then((snapshot) => {
+
+          let arrImages = []
+          snapshot.forEach(doc => {
+            arrImages.push(doc.id)
+          })
+
+          resolve(arrImages)
+        })
+        .catch((err) => {
+          reject(err)
+        })
+
+    })
+  }
+
+
+  static getRestaurantImage(restaurantId, imageId) {
+
+    return new Promise(function (resolve, reject) {
+      var imageRef = ImageCollection.doc(restaurantId);
+      imageRef.collection("menu").doc(imageId).get()
+        .then((doc) => {
+          resolve(doc.data())
+        })
+        .catch((err) => {
+          reject(err)
+        })
+
+    })
+  }
+
 
   static getRestaurantData(restaurantId) {
     return new Promise(function (resolve, reject) {
@@ -32,7 +71,6 @@ class Firebase {
               description: doc.data().description,
               price: doc.data().price,
               category: doc.data().category,
-              base64: doc.data().base64
             })
           })
 
@@ -92,7 +130,7 @@ class Firebase {
     })
   }
 
-  static deleteCollection(restaurantId){
+  static deleteCollection(restaurantId) {
     RestaurantCollection.doc(restaurantId).delete();
   }
 }
