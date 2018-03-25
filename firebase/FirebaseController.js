@@ -31,7 +31,8 @@ class Firebase {
               photoUrl: doc.data().photoUrl,
               description: doc.data().description,
               price: doc.data().price,
-              category: doc.data().category
+              category: doc.data().category,
+              base64: doc.data().base64
             })
           })
 

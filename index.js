@@ -87,11 +87,12 @@ bleno.on('accept', function (clientAddress) {
 
   FirebaseDB.getRestaurantData(process.env.RESTAURANT_ID)
     .then((data) => {
-      pusher.trigger(`${process.env.RESTAURANT_NAME}`, Constants.EVENT_GET_DATA_RESTAURANT, data);
+      console.error('data Firebase : ', data)
+      pusher.trigger(`${process.env.CHANNEL_NAME}`, Constants.EVENT_GET_DATA_RESTAURANT, data);
     })
     .catch((err) => {
       console.error('eror Firebase', err)
-      pusher.trigger(`${process.env.RESTAURANT_NAME}`, Constants.EVENT_FAILED_GET_RESTAURANT, err);
+      pusher.trigger(`${process.env.CHANNEL_NAME}`, Constants.EVENT_FAILED_GET_RESTAURANT, err);
     })
 
 });
