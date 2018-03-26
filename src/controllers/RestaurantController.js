@@ -2,6 +2,7 @@ const Menu = require('../models/MenuModel')
 const Table = require('../models/TableModel')
 const Restaurant = require('../models/RestaurantModel')
 const Order = require('../models/OrderModel')
+const OrderItem = require('../models/OrderItemModel');
 
 const CachedController = require('./CachedController')
 
@@ -40,21 +41,22 @@ class RestaurantController {
   }
 
   static createOrder(data) {
-    var order = new Order(
-      {
-        // idCustomer: data.idCustomer,
-        restaurant: data.idRestaurant,
-        table: data.idTable,
-        menuList: data.menuList
-      }
-    )
+    console.log('data createOrder', data)
 
-    return new Promise(function (resolve, reject) {
-      order.save(function (err, savedData) {
-        if (err) reject(err);
-        else resolve(savedData);
-      });
+    let arrPromise = []
+    data.menuList.forEach((item)=>{
+      arrPromise.push(
+        new Order({
+          restaurant: data.idRestaurant,
+          table: data.idTable,
+          menuId: item._id,
+          name: item.name,
+          quantity: item.quantity,
+          isReady: false
+        }).save()
+      )
     })
+    return Promise.all(arrPromise)
   }
 
   static getOrder(restaurantId) {

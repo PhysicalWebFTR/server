@@ -73,9 +73,9 @@ bleno.on('accept', function (clientAddress) {
 
   RestaurantController.getRestaurantData(process.env.RESTAURANT_ID)
     .then((data) => {
-      var jsonPretty = JSON.stringify(JSON.parse(data),null,2);
-      console.log(jsonPretty)
-      
+      // var jsonPretty = JSON.stringify(JSON.parse(data),null,2);
+      // console.log(jsonPretty)
+
       pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_GET_DATA_RESTAURANT, data)
     })
     .catch((err) => {
@@ -95,10 +95,14 @@ const createOrderCharacteristic = new bleno.Characteristic({
   properties: ['write'],
   onWriteRequest: function (data, offset, withoutResponse, callback) {
     console.log('Write Request..');
+    console.log('offset', offset)
+    console.log('onwrite', data)
+    let obj = JSON.parse(data.toString())
+    console.log(obj)
 
-    RestaurantController.createOrder(data)
-      .then((data) => {
-        console.log('Success Create Order', data)
+    RestaurantController.createOrder(obj)
+      .then((result) => {
+        console.log('Success Create Order', result)
         pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_ORDER, data)
         callback(this.RESULT_SUCCESS)
       })

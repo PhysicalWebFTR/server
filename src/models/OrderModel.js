@@ -5,8 +5,11 @@ var OrderSchema = new Schema(
   {
     // idCustomer: String,
     restaurant: {type : Schema.Types.ObjectId, ref: 'Restaurant'},
-    table: {type : Schema.Types.ObjectId, ref: 'Table'},
-    menuList: [{type : Schema.Types.ObjectId, ref: 'OrderItem'}]
+    tableId: {type : Schema.Types.ObjectId, ref: 'Table'},
+    menuId: {type : Schema.Types.ObjectId, ref: 'Menu'},
+    name: String,
+    quantity: Number,
+    isReady: Boolean
   },
   {
     timestamps: true,
