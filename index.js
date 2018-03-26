@@ -17,7 +17,7 @@ require('dotenv').config();
 /**
  * Mongo DB Setup
  */
-mongoose.connect(`${process.env.MONGO_URL_TEST}`);
+mongoose.connect(`${process.env.MONGO_URL}`);
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
@@ -114,12 +114,12 @@ const createOrderCharacteristic = new bleno.Characteristic({
     RestaurantController.createOrder(obj)
       .then((result) => {
         console.log('Success Create Order', result)
-        pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_ORDER, data)
+        pusher.main.trigger(process.env.CHANNEL_NAME, constants.EVENT_ORDER, data)
         callback(this.RESULT_SUCCESS)
       })
       .catch((err) => {
         console.error('Failed Create Order', err)
-        pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_FAILED_CREATE_ORDER, err)
+        pusher.main.trigger(process.env.CHANNEL_NAME, constants.EVENT_FAILED_CREATE_ORDER, err)
       })
   }
 })
