@@ -1,5 +1,5 @@
-const bleno = require('bleno');
-const mongoose = require('mongoose');
+const bleno = require('bleno')
+const mongoose = require('mongoose')
 
 //Constanta
 const constants = require('./src/configs/Constants')
@@ -8,19 +8,36 @@ const pusher = require('./src/configs/PusherConfiguration')
 
 //Controllers
 const CachedController = require('./src/controllers/CachedController')
+const RestaurantController = require('./src/controllers/RestaurantController')
 
 
 require('dotenv').config();
-mongoose.connect('mongodb://dominicusrobert7:password1234567890@ds223609.mlab.com:23609/momakan');
 
+console.log('settings', settings)
+console.log('pusher', pusher)
 
+/**
+ * Mongo DB Setup
+ */
+mongoose.connect(`${process.env.MONGO_URL}`);
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
-    console.log('CONNECT TO MONGOOSE');
-});
+db.once('open', function () {
+  console.log('CONNECT TO MONGOOSE');
+})
 
 
+// RestaurantController.getOrder(process.env.RESTAURANT_ID)
+//   .then((data) => {
+//     console.log(data)
+//   })
+//   .catch((err) => {
+//     console.error(err)
+//   })
+
+/**
+ * BLE
+ */
 bleno.on('stateChange', function (state) {
   if (state !== 'poweredOn') {
     bleno.stopAdvertising()
@@ -46,27 +63,7 @@ bleno.on('advertisingStart', function (error) {
     new bleno.PrimaryService({
       uuid: settings.service_id,
       characteristics: [
-        new bleno.Characteristic({
-          value: null,
-          uuid: settings.characteristic_id,
-          properties: ['write'],
-          onWriteRequest: function (data, offset, withoutResponse, callback) {
-            console.log('Write Request..');
-        
-            // FirebaseDB.createOrder(data)
-            //   .then((data) => {
-            //     console.log('Success Create Order Firebase', data)
-            //     pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_ORDER, data)
-            //     callback(this.RESULT_SUCCESS)
-            //   })
-            //   .catch((err) => {
-            //     console.error('Failed Create Order Firebase', err)
-            //     pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_FAILED_CREATE_ORDER, err)
-            //     // callback(this.RESULT_FAILED)
-            //   })
-        
-          }
-        })
+        createOrderCharacteristic
       ]
     })
   ])
@@ -74,14 +71,41 @@ bleno.on('advertisingStart', function (error) {
 
 bleno.on('accept', function (clientAddress) {
 
-  // FirebaseDB.getRestaurantData(process.env.RESTAURANT_ID)
-  //   .then((data) => {
-  //     console.log('data Firebase : ', data)
-  //     pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_GET_DATA_RESTAURANT, data);
-  //   })
-  //   .catch((err) => {
-  //     console.error('eror Firebase', err)
-  //     pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_FAILED_GET_RESTAURANT, err);
-  //   })
+  RestaurantController.getRestaurantData(process.env.RESTAURANT_ID)
+    .then((data) => {
+      var jsonPretty = JSON.stringify(JSON.parse(data),null,2);
+      console.log(jsonPretty)
+      
+      pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_GET_DATA_RESTAURANT, data)
+    })
+    .catch((err) => {
+      console.error(err)
+      pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_FAILED_GET_RESTAURANT, err)
+    })
 
+})
+
+
+/**
+ * Service Characteristics
+ */
+const createOrderCharacteristic = new bleno.Characteristic({
+  value: null,
+  uuid: settings.characteristic_id,
+  properties: ['write'],
+  onWriteRequest: function (data, offset, withoutResponse, callback) {
+    console.log('Write Request..');
+
+    RestaurantController.createOrder(data)
+      .then((data) => {
+        console.log('Success Create Order', data)
+        pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_ORDER, data)
+        callback(this.RESULT_SUCCESS)
+      })
+      .catch((err) => {
+        console.error('Failed Create Order', err)
+        pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_FAILED_CREATE_ORDER, err)
+      })
+
+  }
 })

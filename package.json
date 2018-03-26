@@ -1,10 +1,11 @@
 {
-  "name": "centralPizzaServer",
+  "name": "MomakanServer",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
     "bleno": "^0.5.0",
+    "cors": "^2.8.4",
     "dateformat": "^3.0.3",
     "dotenv": "^5.0.1",
     "mongoose": "^5.0.11",
