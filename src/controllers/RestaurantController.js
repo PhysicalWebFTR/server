@@ -42,11 +42,10 @@ class RestaurantController {
   static createOrder(data) {
     var order = new Order(
       {
-        idCustomer: data.idCustomer,
-        restaurant: data.restaurant,
-        table: data.table,
-        menu: data.menuId,
-        quantity: data.quantity
+        // idCustomer: data.idCustomer,
+        restaurant: data.idRestaurant,
+        table: data.idTable,
+        menuList: data.menuList
       }
     )
 
