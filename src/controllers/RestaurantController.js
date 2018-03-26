@@ -2,14 +2,12 @@ const Menu = require('../models/MenuModel')
 const Table = require('../models/TableModel')
 const Restaurant = require('../models/RestaurantModel')
 const Order = require('../models/OrderModel')
-const OrderItem = require('../models/OrderItemModel');
 
 const CachedController = require('./CachedController')
 
 class RestaurantController {
 
   static getRestaurantData(restaurantId) {
-    console.log('AYAYAYAY')
     return new Promise(function (resolve, reject) {
       CachedController.getRestaurant()
         .then((restaurant) => {
@@ -29,18 +27,15 @@ class RestaurantController {
                     resolve(data)
                   })
                   .catch((err) => {
-                    console.log('xx1', err)
                     throw (err)
                   })
               })
               .catch((err) => {
-                console.log('xx2', err)
                 throw (err)
               })
           }
         })
         .catch((error) => {
-          console.log('xx2')
           reject(error)
         })
     })

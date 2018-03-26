@@ -7,7 +7,6 @@ var OrderSchema = new Schema(
     restaurant: {type : Schema.Types.ObjectId, ref: 'Restaurant'},
     tableId: {type : Schema.Types.ObjectId, ref: 'Table'},
     menuId: {type : Schema.Types.ObjectId, ref: 'Menu'},
-    name: String,
     quantity: Number,
     isReady: Boolean
   },

@@ -1,7 +1,7 @@
 const bleno = require('bleno')
 const mongoose = require('mongoose')
 
-//Constanta
+//Constants
 const constants = require('./src/configs/Constants')
 const settings = require('./src/configs/BleConfiguration')
 const pusher = require('./src/configs/PusherConfiguration')
@@ -33,23 +33,24 @@ db.once('open', function () {
 //     console.error(err)
 //   })
 
-const channel = pusher.channel(process.env.CHANNEL_NAME);
-channel.bind('new-message', function (data) {
-  console.log(data);
 
-  // let obj = JSON.parse(data.toString())
-  RestaurantController.createOrder(obj)
-    .then((result) => {
-      console.log('Success Create Order', result)
-      pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_ORDER, data)
-      callback(this.RESULT_SUCCESS)
-    })
-    .catch((err) => {
-      console.error('Failed Create Order', err)
-      pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_FAILED_CREATE_ORDER, err)
-    })
+// const channel = pusher.js.subscribe('order-channel')
+// channel.bind('get-order-event', function (data) {
+//   console.log(data);
 
-});
+//   // let obj = JSON.parse(data.toString())
+//   RestaurantController.createOrder(obj)
+//     .then((result) => {
+//       console.log('Success Create Order', result)
+//       pusher.main.trigger(process.env.CHANNEL_NAME, constants.EVENT_ORDER, data)
+//       callback(this.RESULT_SUCCESS)
+//     })
+//     .catch((err) => {
+//       console.error('Failed Create Order', err)
+//       pusher.main.trigger(process.env.CHANNEL_NAME, constants.EVENT_FAILED_CREATE_ORDER, err)
+//     })
+
+// });
 
 /**
  * BLE
@@ -75,25 +76,25 @@ bleno.on('advertisingStart', function (error) {
 
   console.log('Advertising Start..');
 
-  // bleno.setServices([
-  //   new bleno.PrimaryService({
-  //     uuid: settings.service_id,
-  //     characteristics: [
-  //       createOrderCharacteristic
-  //     ]
-  //   })
-  // ])
+  bleno.setServices([
+    new bleno.PrimaryService({
+      uuid: settings.service_id,
+      characteristics: [
+        createOrderCharacteristic
+      ]
+    })
+  ])
 })
 
 bleno.on('accept', function (clientAddress) {
-
+  console.log('accept')
   RestaurantController.getRestaurantData(process.env.RESTAURANT_ID)
     .then((data) => {
-      pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_GET_DATA_RESTAURANT, data)
+      pusher.main.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_GET_DATA_RESTAURANT, data)
     })
     .catch((err) => {
       console.error(err)
-      pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_FAILED_GET_RESTAURANT, err)
+      pusher.main.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_FAILED_GET_RESTAURANT, err)
     })
 
 })
@@ -102,23 +103,23 @@ bleno.on('accept', function (clientAddress) {
 /**
  * Service Characteristics
  */
-// const createOrderCharacteristic = new bleno.Characteristic({
-//   value: null,
-//   uuid: settings.characteristic_id,
-//   properties: ['write'],
-//   onWriteRequest: function (data, offset, withoutResponse, callback) {
-//     console.log('Write Request..')
+const createOrderCharacteristic = new bleno.Characteristic({
+  value: null,
+  uuid: settings.characteristic_id,
+  properties: ['write'],
+  onWriteRequest: function (data, offset, withoutResponse, callback) {
+    console.log('Write Request..')
 
-//     let obj = JSON.parse(data.toString())
-//     RestaurantController.createOrder(obj)
-//       .then((result) => {
-//         console.log('Success Create Order', result)
-//         pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_ORDER, data)
-//         callback(this.RESULT_SUCCESS)
-//       })
-//       .catch((err) => {
-//         console.error('Failed Create Order', err)
-//         pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_FAILED_CREATE_ORDER, err)
-//       })
-//   }
-// })
+    let obj = JSON.parse(data.toString())
+    RestaurantController.createOrder(obj)
+      .then((result) => {
+        console.log('Success Create Order', result)
+        pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_ORDER, data)
+        callback(this.RESULT_SUCCESS)
+      })
+      .catch((err) => {
+        console.error('Failed Create Order', err)
+        pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_FAILED_CREATE_ORDER, err)
+      })
+  }
+})

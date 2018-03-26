@@ -22,72 +22,66 @@ const RestaurantController = require('../src/controllers/RestaurantController')
 
 
 const idRestaurant = '5ab7bce6f36d28275093857e'
+const exampleData = {
+  restaurant: '5ab7bce6f36d28275093857e',
+  table: '5ab7bd43f36d2827509385a6',
+  menuList: [{
+    menuId: '5ab7bfddf36d282750938637',
+    name: 'Christmas Pie',
+    quantity: 2
+  }]
+}
 
 describe('Request Data', function () {
+
   describe('Restaurant Data', function () {
-
     it('Success Get Restaurant Data', function (done) {
-      // this.timeout(10000)
-      RestaurantController.getRestaurantData('5ab7bce6f36d28275093857e')
-          .then((data) => {
-            console.log(data)
-            expect(data).to.be.a('object');
-            
-            expect(data).to.have.property('id');
-            expect(data).to.have.property('name');
-            expect(data).to.have.property('table_list');
-            expect(data).to.have.property('menu_list');
-  
-            expect(data.id).to.be.a('string');
-            expect(data.name).to.be.a('string');
-            expect(data.table_list).to.be.a('array');
-            expect(data.menu_list).to.be.a('array');
-  
-            done()
-          })
-          .catch((err) => {
-            console.error('eror Firebase', err)
-            done()
-          })
-  
-      }).timeout(0)
+      RestaurantController.getRestaurantData(idRestaurant)
+        .then((data) => {
+          console.log(data)
+          expect(data).to.be.a('object');
 
-    // it('Success Get Restaurant Data', function (done) {
-    //   FirebaseDB.getRestaurantData(idRestaurant)
-    //     .then((data) => {
-    //       console.log(data)
-    //       expect(data).to.be.a('object');
-          
-    //       expect(data).to.have.property('id');
-    //       expect(data).to.have.property('name');
-    //       expect(data).to.have.property('table_list');
-    //       expect(data).to.have.property('menu_list');
+          expect(data).to.have.property('_id');
+          expect(data).to.have.property('name');
+          expect(data).to.have.property('table_list');
+          expect(data).to.have.property('menu_list');
 
-    //       expect(data.id).to.be.a('string');
-    //       expect(data.name).to.be.a('string');
-    //       expect(data.table_list).to.be.a('array');
-    //       expect(data.menu_list).to.be.a('array');
+          expect(data._id).to.be.a('string');
+          expect(data.name).to.be.a('string');
+          expect(data.table_list).to.be.a('array');
+          expect(data.menu_list).to.be.a('array');
 
-    //       done()
-    //     })
-    //     .catch((err) => {
-    //       console.error('eror Firebase', err)
-    //     })
-
-    // }).timeout(0);
+          done()
+        })
+        .catch((err) => {
+          console.error('eror Firebase', err)
+        })
+    }).timeout(0)
 
   })
 
+  // describe('Create Restaurant Order', function () {
+  //   RestaurantController.createOrder(exampleData)
+  //     .then((data) => {
+  //       console.log('create : ', data)
+  //       expect(data).to.be.a('array');
 
-  // describe('Order', function () {
+  //       // expect(data).to.have.property('id');
+  //       // expect(data).to.have.property('name');
+  //       // expect(data).to.have.property('table_list');
+  //       // expect(data).to.have.property('menu_list');
 
-  //   it('Success Create Order Data', function (done) {
+  //       // expect(data.id).to.be.a('string');
+  //       // expect(data.name).to.be.a('string');
+  //       // expect(data.table_list).to.be.a('array');
+  //       // expect(data.menu_list).to.be.a('array');
 
-  //   }).timeout(0);
+  //       done()
+  //     })
+  //     .catch((err) => console.error('error', err))
+  // })
 
-  //   it('Success Delete Order Data', function (done) {
-
-  //   }).timeout(0);
+  // describe('Get Restaurant Orders', function () {
 
   // })
 
