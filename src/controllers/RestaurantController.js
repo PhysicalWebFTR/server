@@ -9,28 +9,34 @@ const CachedController = require('./CachedController')
 class RestaurantController {
 
   static getRestaurantData(restaurantId) {
-
+    console.log('AYAYAYAY')
     return new Promise(function (resolve, reject) {
       CachedController.getRestaurant()
         .then((restaurant) => {
-          if (restaurant !== null && restaurant !== undefined && restaurant !== "undefined") {
-            resolve(restaurant)
+          if (restaurant && restaurant !== undefined) {
+            resolve(JSON.parse(restaurant))
             return;
           }
           else {
             Restaurant.findOne({ _id: restaurantId })
-            .populate('menu_list')
-            .populate('table_list')
-            .exec()
-            .then((data) => {
-              CachedController.saveRestaurant(JSON.stringify(data))
-                .then((statusSaved) => {
-                  resolve(data)
-                })
-                .catch((err) => {
-                  throw (err)
-                })
-            })
+              .populate('menu_list')
+              .populate('table_list')
+              .exec()
+              .then((data) => {
+                console.log('cobaa', data)
+                CachedController.saveRestaurant(JSON.stringify(data))
+                  .then((statusSaved) => {
+                    resolve(data)
+                  })
+                  .catch((err) => {
+                    console.log('xx1', err)
+                    throw (err)
+                  })
+              })
+              .catch((err) => {
+                console.log('xx2', err)
+                throw (err)
+              })
           }
         })
         .catch((error) => {
@@ -44,7 +50,7 @@ class RestaurantController {
     console.log('data createOrder', data)
 
     let arrPromise = []
-    data.menuList.forEach((item)=>{
+    data.menuList.forEach((item) => {
       arrPromise.push(
         new Order({
           restaurant: data.idRestaurant,
