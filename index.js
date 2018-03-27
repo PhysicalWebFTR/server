@@ -77,7 +77,6 @@ bleno.on('accept', function (clientAddress) {
 
       if (restaurant && restaurant !== undefined) {
         pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_GET_DATA_RESTAURANT, restaurant)
-        pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_ORDER_ADMIN, restaurant)
         return
       }
 
