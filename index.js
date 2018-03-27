@@ -25,16 +25,6 @@ db.once('open', function () {
 })
 
 
-// RestaurantController.getSummaryOrderFood(process.env.RESTAURANT_ID)
-// RestaurantController.getSummaryOrderCategory(process.env.RESTAURANT_ID)
-//   .then((data) => {
-//     console.log('success', data)
-//   })
-//   .catch((err) => {
-//     console.error('Error', err)
-//   })
-
-
 // /**
 //  * BLE
 //  */
@@ -119,9 +109,30 @@ const createOrderCharacteristic = new bleno.Characteristic({
       .then((result) => {
         console.log('Success Create Order', result)
         pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_ORDER, data)
-        pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_ORDER_ADMIN, obj)
-        
-        callback(this.RESULT_SUCCESS)
+
+        ///////////////////////////////////////////////////////////////////
+
+        result.forEach((item) => {
+          RestaurantController.getOrder(item._id)
+            .populate('tableId')
+            .populate('menuId')
+            .exec()
+            .then((detailOrder) => {
+              let newDetail = {
+                table: detailOrder.tableId,
+                menu: detailOrder.menuId,
+                quantity: detailOrder.quantity,
+                isReady: detailOrder.isReady
+              }
+              pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_ORDER_ADMIN, newDetail)
+
+            })
+            .catch((err) => {
+              console.error('failed get order', err)
+            })
+        })
+
+        // callback(this.RESULT_SUCCESS)
       })
       .catch((err) => {
         console.error('Failed Create Order', err)
