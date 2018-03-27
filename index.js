@@ -26,13 +26,13 @@ db.once('open', function () {
 
 
 // RestaurantController.getSummaryOrderFood(process.env.RESTAURANT_ID)
-RestaurantController.getSummaryOrderCategory(process.env.RESTAURANT_ID)
-  .then((data) => {
-    console.log('success', data)
-  })
-  .catch((err) => {
-    console.error('Error', err)
-  })
+// RestaurantController.getSummaryOrderCategory(process.env.RESTAURANT_ID)
+//   .then((data) => {
+//     console.log('success', data)
+//   })
+//   .catch((err) => {
+//     console.error('Error', err)
+//   })
 
 
 // /**
@@ -95,7 +95,7 @@ bleno.on('accept', function (clientAddress) {
         })
     })
     .catch((error) => {
-      pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_FAILED_GET_RESTAURANT, err)
+      pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_FAILED_GET_RESTAURANT, error)
     })
 
 })
