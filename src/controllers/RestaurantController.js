@@ -117,7 +117,7 @@ class RestaurantController {
 
           let finalResult = []
           Object.keys(result).forEach((key) => {
-            finalResult.push({ category: result[key].category, quantity: result[key].quantity })
+            finalResult.push({ name: result[key].category, quantity: result[key].quantity })
           })
 
           resolve(finalResult)

@@ -26,101 +26,101 @@ db.once('open', function () {
 
 
 // RestaurantController.getSummaryOrderFood(process.env.RESTAURANT_ID)
-// RestaurantController.getSummaryOrderCategory(process.env.RESTAURANT_ID)
-//   .then((data) => {
-//     console.log('success', data)
-//   })
-//   .catch((err) => {
-//     console.error('Error', err)
-//   })
+RestaurantController.getSummaryOrderCategory(process.env.RESTAURANT_ID)
+  .then((data) => {
+    console.log('success', data)
+  })
+  .catch((err) => {
+    console.error('Error', err)
+  })
 
 
 // /**
 //  * BLE
 //  */
-bleno.on('stateChange', function (state) {
-  if (state !== 'poweredOn') {
-    bleno.stopAdvertising()
-    return
-  }
+// bleno.on('stateChange', function (state) {
+//   if (state !== 'poweredOn') {
+//     bleno.stopAdvertising()
+//     return
+//   }
 
-  bleno.startAdvertising(
-    `${process.env.RESTAURANT_NAME}`,
-    [settings.service_id],
-    (err) => console.error('Start Advertising error', err)
-  )
-})
+//   bleno.startAdvertising(
+//     `${process.env.RESTAURANT_NAME}`,
+//     [settings.service_id],
+//     (err) => console.error('Start Advertising error', err)
+//   )
+// })
 
-bleno.on('advertisingStart', function (error) {
-  if (error) {
-    console.error('Advertising Error..')
-    return
-  }
+// bleno.on('advertisingStart', function (error) {
+//   if (error) {
+//     console.error('Advertising Error..')
+//     return
+//   }
 
-  console.log('Advertising Start..');
+//   console.log('Advertising Start..');
 
-  bleno.setServices([
-    new bleno.PrimaryService({
-      uuid: settings.service_id,
-      characteristics: [
-        createOrderCharacteristic
-      ]
-    })
-  ])
-})
+//   bleno.setServices([
+//     new bleno.PrimaryService({
+//       uuid: settings.service_id,
+//       characteristics: [
+//         createOrderCharacteristic
+//       ]
+//     })
+//   ])
+// })
 
-bleno.on('accept', function (clientAddress) {
-  console.log('accept')
+// bleno.on('accept', function (clientAddress) {
+//   console.log('accept')
 
-  CachedController.getRestaurant()
-    .then((restaurant) => {
+//   CachedController.getRestaurant()
+//     .then((restaurant) => {
 
-      if (restaurant && restaurant !== undefined) {
-        pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_GET_DATA_RESTAURANT, data)
-        return
-      }
+//       if (restaurant && restaurant !== undefined) {
+//         pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_GET_DATA_RESTAURANT, data)
+//         return
+//       }
 
-      RestaurantController.getRestaurantData(process.env.RESTAURANT_ID)
-        .then((data) => {
-          return CachedController.saveRestaurant(data)
-            .then((statusSaved) => {
-              pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_GET_DATA_RESTAURANT, data)
-            })
-            .catch((err) => {
-              throw (err)
-            })
-        })
-        .catch((err) => {
-          throw (err)
-        })
-    })
-    .catch((error) => {
-      pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_FAILED_GET_RESTAURANT, err)
-    })
+//       RestaurantController.getRestaurantData(process.env.RESTAURANT_ID)
+//         .then((data) => {
+//           return CachedController.saveRestaurant(data)
+//             .then((statusSaved) => {
+//               pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_GET_DATA_RESTAURANT, data)
+//             })
+//             .catch((err) => {
+//               throw (err)
+//             })
+//         })
+//         .catch((err) => {
+//           throw (err)
+//         })
+//     })
+//     .catch((error) => {
+//       pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_FAILED_GET_RESTAURANT, err)
+//     })
 
-})
+// })
 
 
-/**
- * Service Characteristics
- */
-const createOrderCharacteristic = new bleno.Characteristic({
-  value: null,
-  uuid: settings.characteristic_id,
-  properties: ['write'],
-  onWriteRequest: function (data, offset, withoutResponse, callback) {
-    console.log('Write Request..')
+// /**
+//  * Service Characteristics
+//  */
+// const createOrderCharacteristic = new bleno.Characteristic({
+//   value: null,
+//   uuid: settings.characteristic_id,
+//   properties: ['write'],
+//   onWriteRequest: function (data, offset, withoutResponse, callback) {
+//     console.log('Write Request..')
 
-    let obj = JSON.parse(data.toString())
-    RestaurantController.createOrder(obj)
-      .then((result) => {
-        console.log('Success Create Order', result)
-        pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_ORDER, data)
-        callback(this.RESULT_SUCCESS)
-      })
-      .catch((err) => {
-        console.error('Failed Create Order', err)
-        pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_FAILED_CREATE_ORDER, err)
-      })
-  }
-})
+//     let obj = JSON.parse(data.toString())
+//     RestaurantController.createOrder(obj)
+//       .then((result) => {
+//         console.log('Success Create Order', result)
+//         pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_ORDER, data)
+//         callback(this.RESULT_SUCCESS)
+//       })
+//       .catch((err) => {
+//         console.error('Failed Create Order', err)
+//         pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_FAILED_CREATE_ORDER, err)
+//       })
+//   }
+// })
