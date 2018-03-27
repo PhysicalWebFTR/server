@@ -6,6 +6,10 @@ const RedisKeys = require("../configs/RedisKeys")
 
 class CachedController {
 
+  static getClient(){
+    return client
+  }
+
   static saveRestaurant(restaurantData){
     if(!restaurantData) return Promise.reject({message: 'Bad Request'})
     return new Promise(function (resolve, reject) {

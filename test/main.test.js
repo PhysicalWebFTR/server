@@ -240,4 +240,34 @@ describe('Cached', function () {
 
   })
 
+
+  describe('Close Cached Connection', function () {
+
+    it('Create Restaurant Cached Failed', function (done) {
+      CachedController.getClient().quit()
+      CachedController.saveRestaurant(exampleRestaurant)
+      .catch((err) => {
+        // console.error('error', err)
+        expect(err).to.have.property('code')
+
+        done()
+      })
+
+    }).timeout(0)
+
+    it('Get Restaurant Cached Failed', function (done) {
+      CachedController.getClient().quit()
+      CachedController.getRestaurant()
+      .catch((err) => {
+        // console.error('error', err)
+        expect(err).to.have.property('code')
+
+        done()
+      })
+
+    }).timeout(0)
+
+  })
+
+
 })
