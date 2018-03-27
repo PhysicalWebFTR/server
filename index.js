@@ -87,14 +87,17 @@ bleno.on('accept', function (clientAddress) {
               pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_GET_DATA_RESTAURANT, data)
             })
             .catch((err) => {
+              console.error('failed save restaurant', error)
               throw (err)
             })
         })
         .catch((err) => {
+          console.error('failed get restaurant data', error)
           throw (err)
         })
     })
     .catch((error) => {
+      console.error('failed send data restaurant', error)
       pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_FAILED_GET_RESTAURANT, error)
     })
 
