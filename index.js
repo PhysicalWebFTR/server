@@ -119,7 +119,7 @@ const createOrderCharacteristic = new bleno.Characteristic({
       .then((result) => {
         console.log('Success Create Order', result)
         pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_ORDER, data)
-        pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_ORDER_ADMIN, data)
+        pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_ORDER_ADMIN, obj)
         
         callback(this.RESULT_SUCCESS)
       })
