@@ -50,8 +50,8 @@ class RestaurantController {
 
   static getOrders(restaurantId) {
     if (!restaurantId) return Promise.reject({ message: 'Bad Request' })
-    // return Order.find({ 'restaurant': restaurantId })
-    return Order.find()
+    return Order.find({ 'restaurant': restaurantId })
+    // return Order.find()
       // .populate('restaurant')
       .populate('tableId')
       .populate('menuId')

@@ -234,6 +234,28 @@ describe('Data', function () {
           })
       }).timeout(0)
 
+      it('Get Restaurant Summary Food (false restaurant id)', function (done) {
+        RestaurantController.getSummaryOrderFood(DummyData.idRestaurant+'xxxx')
+          .catch((err) => {
+            // console.error('Get Restaurant Summary', err)
+            expect(err).to.have.property('message')
+            expect(err).to.have.property('name')
+            done()
+          })
+
+      }).timeout(0)
+
+      it('Get Restaurant Summary Category Food (false restaurant id)', function (done) {
+        RestaurantController.getSummaryOrderCategory(DummyData.idRestaurant+'xxxx')
+          .catch((err) => {
+            // console.error('Get Restaurant Summary', err)
+            expect(err).to.have.property('message')
+            expect(err).to.have.property('name')
+            done()
+          })
+
+      }).timeout(0)
+
       it('Get Restaurant Summary Food Bad Request (without restaurant id)', function (done) {
         RestaurantController.getSummaryOrderFood()
           .catch((err) => {
