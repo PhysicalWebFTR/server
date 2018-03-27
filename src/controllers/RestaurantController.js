@@ -8,7 +8,7 @@ const CachedController = require('./CachedController')
 class RestaurantController {
 
   static getRestaurantData(restaurantId) {
-    if(!restaurantId) return Promise.reject({ message: 'Bad Request' })
+    if (!restaurantId) return Promise.reject({ message: 'Bad Request' })
     return Restaurant.findOne({ _id: restaurantId })
       .populate('menu_list')
       .populate('table_list')
@@ -22,7 +22,7 @@ class RestaurantController {
     let validBody = data.menuList && data.menuList.length > 0
     let validRequest = false
 
-    if(validBody){
+    if (validBody) {
       data.menuList.forEach((item) => {
         const orderData = {
           // restaurant: data.idRestaurant,
@@ -32,12 +32,12 @@ class RestaurantController {
           quantity: item.quantity,
           isReady: false
         }
-  
+
         if (orderData.menuId && orderData.name && orderData.quantity) {
-          arrPromise.push( new Order(orderData).save() )
+          arrPromise.push(new Order(orderData).save())
         }
         else return validBody = false
-        
+
       })
     }
 
@@ -49,13 +49,82 @@ class RestaurantController {
   }
 
   static getOrders(restaurantId) {
-    if(!restaurantId) return Promise.reject({ message: 'Bad Request' })
+    if (!restaurantId) return Promise.reject({ message: 'Bad Request' })
     // return Order.find({ 'restaurant': restaurantId })
     return Order.find()
-      .populate('restaurant')
-      .populate('table')
-      .populate('menu')
+      // .populate('restaurant')
+      .populate('tableId')
+      .populate('menuId')
       .exec()
+  }
+
+  static getSummaryOrderFood(restaurantId) {
+    return new Promise(function (resolve, reject) {
+      RestaurantController.getOrders(restaurantId)
+        .then((data) => {
+
+          let result = {}
+          data.forEach((order) => {
+            if (result[order.menuId._id]) {
+              result[order.menuId._id] = {
+                name: order.menuId.name,
+                quantity: order.quantity + result[order.menuId._id].quantity
+              }
+            }
+            else {
+              result[order.menuId._id] = {
+                name: order.menuId.name,
+                quantity: order.quantity
+              }
+            }
+          })
+
+          let finalResult = []
+          Object.keys(result).forEach((key) => {
+            finalResult.push({ name: result[key].name, quantity: result[key].quantity })
+          })
+
+          resolve(finalResult)
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
+  }
+
+
+  static getSummaryOrderCategory(restaurantId) {
+    return new Promise(function (resolve, reject) {
+      RestaurantController.getOrders(restaurantId)
+        .then((data) => {
+
+          let result = {}
+          data.forEach((order) => {
+            if (result[order.menuId.category]) {
+              result[order.menuId.category] = {
+                category: order.menuId.category,
+                quantity: order.quantity + result[order.menuId.category].quantity
+              }
+            }
+            else {
+              result[order.menuId.category] = {
+                category: order.menuId.category,
+                quantity: order.quantity
+              }
+            }
+          })
+
+          let finalResult = []
+          Object.keys(result).forEach((key) => {
+            finalResult.push({ category: result[key].category, quantity: result[key].quantity })
+          })
+
+          resolve(finalResult)
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
   }
 
 }
