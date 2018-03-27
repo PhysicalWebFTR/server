@@ -1,5 +1,4 @@
 const Pusher = require('pusher'); // for pushing real-time updates to clients
-// const PusherJS = require('pusher-js'); // for listening real-time updates from clients
 
 require('dotenv').config();
 
@@ -11,10 +10,4 @@ const obj = {
   encrypted: true
 }
 
-const main = new Pusher(obj)
-// const js = new PusherJS(obj)
-
-module.exports = {
-  main,
-  // js
-}
+module.exports = new Pusher(obj)

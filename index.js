@@ -7,8 +7,8 @@ const settings = require('./src/configs/BleConfiguration')
 const pusher = require('./src/configs/PusherConfiguration')
 
 //Controllers
-const CachedController = require('./src/controllers/CachedController')
 const RestaurantController = require('./src/controllers/RestaurantController')
+const CachedController = require('./src/controllers/CachedController')
 
 
 require('dotenv').config();
@@ -33,24 +33,6 @@ db.once('open', function () {
 //     console.error(err)
 //   })
 
-
-// const channel = pusher.js.subscribe('order-channel')
-// channel.bind('get-order-event', function (data) {
-//   console.log(data);
-
-//   // let obj = JSON.parse(data.toString())
-//   RestaurantController.createOrder(obj)
-//     .then((result) => {
-//       console.log('Success Create Order', result)
-//       pusher.main.trigger(process.env.CHANNEL_NAME, constants.EVENT_ORDER, data)
-//       callback(this.RESULT_SUCCESS)
-//     })
-//     .catch((err) => {
-//       console.error('Failed Create Order', err)
-//       pusher.main.trigger(process.env.CHANNEL_NAME, constants.EVENT_FAILED_CREATE_ORDER, err)
-//     })
-
-// });
 
 /**
  * BLE
@@ -88,13 +70,31 @@ bleno.on('advertisingStart', function (error) {
 
 bleno.on('accept', function (clientAddress) {
   console.log('accept')
-  RestaurantController.getRestaurantData(process.env.RESTAURANT_ID)
-    .then((data) => {
-      pusher.main.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_GET_DATA_RESTAURANT, data)
+
+  CachedController.getRestaurant()
+    .then((restaurant) => {
+
+      if (restaurant && restaurant !== undefined) {
+        pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_GET_DATA_RESTAURANT, data)
+        return
+      }
+
+      RestaurantController.getRestaurantData(process.env.RESTAURANT_ID)
+        .then((data) => {
+          return CachedController.saveRestaurant(data)
+            .then((statusSaved) => {
+              pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_GET_DATA_RESTAURANT, data)
+            })
+            .catch((err) => {
+              throw (err)
+            })
+        })
+        .catch((err) => {
+          throw (err)
+        })
     })
-    .catch((err) => {
-      console.error(err)
-      pusher.main.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_FAILED_GET_RESTAURANT, err)
+    .catch((error) => {
+      pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_FAILED_GET_RESTAURANT, err)
     })
 
 })
@@ -114,12 +114,12 @@ const createOrderCharacteristic = new bleno.Characteristic({
     RestaurantController.createOrder(obj)
       .then((result) => {
         console.log('Success Create Order', result)
-        pusher.main.trigger(process.env.CHANNEL_NAME, constants.EVENT_ORDER, data)
+        pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_ORDER, data)
         callback(this.RESULT_SUCCESS)
       })
       .catch((err) => {
         console.error('Failed Create Order', err)
-        pusher.main.trigger(process.env.CHANNEL_NAME, constants.EVENT_FAILED_CREATE_ORDER, err)
+        pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_FAILED_CREATE_ORDER, err)
       })
   }
 })

@@ -7,8 +7,10 @@ const RedisKeys = require("../configs/RedisKeys")
 class CachedController {
 
   static saveRestaurant(restaurantData){
+    if(!restaurantData) return Promise.reject({message: 'Bad Request'})
     return new Promise(function (resolve, reject) {
-      client.set(RedisKeys.RESTAURANT, restaurantData, function (err, reply) {
+      const data = JSON.stringify(restaurantData)
+      client.set(RedisKeys.RESTAURANT, data, function (err, reply) {
         if (err) reject(err)
         else resolve(reply)
       })
@@ -19,7 +21,7 @@ class CachedController {
     return new Promise(function (resolve, reject) {
       client.get(RedisKeys.RESTAURANT, function (err, reply) {
         if (err) reject(err)
-        else resolve(reply)
+        else resolve(JSON.parse(reply))
       })
     })
   }
