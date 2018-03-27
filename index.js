@@ -77,6 +77,7 @@ bleno.on('accept', function (clientAddress) {
 
       if (restaurant && restaurant !== undefined) {
         pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_GET_DATA_RESTAURANT, restaurant)
+        pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_ORDER_ADMIN, restaurant)
         return
       }
 
@@ -85,6 +86,7 @@ bleno.on('accept', function (clientAddress) {
           return CachedController.saveRestaurant(data)
             .then((statusSaved) => {
               pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_GET_DATA_RESTAURANT, data)
+              pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_ORDER_ADMIN, restaurant)
             })
             .catch((err) => {
               console.error('failed save restaurant', error)
