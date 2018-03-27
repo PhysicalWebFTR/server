@@ -59,6 +59,7 @@ class RestaurantController {
   }
 
   static getSummaryOrderFood(restaurantId) {
+    if (!restaurantId) return Promise.reject({ message: 'Bad Request' })
     return new Promise(function (resolve, reject) {
       RestaurantController.getOrders(restaurantId)
         .then((data) => {
@@ -94,10 +95,10 @@ class RestaurantController {
 
 
   static getSummaryOrderCategory(restaurantId) {
+    if (!restaurantId) return Promise.reject({ message: 'Bad Request' })
     return new Promise(function (resolve, reject) {
       RestaurantController.getOrders(restaurantId)
         .then((data) => {
-
           let result = {}
           data.forEach((order) => {
             if (result[order.menuId.category]) {

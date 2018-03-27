@@ -85,15 +85,15 @@ describe('Data', function () {
             expect(data).to.have.lengthOf(1);
 
             data.forEach((item) => {
-              expect(data[0]).to.have.property('_id')
-              expect(data[0]).to.have.property('menuId')
-              expect(data[0]).to.have.property('quantity')
-              expect(data[0]).to.have.property('isReady')
+              expect(item).to.have.property('_id')
+              expect(item).to.have.property('menuId')
+              expect(item).to.have.property('quantity')
+              expect(item).to.have.property('isReady')
 
-              expect(data[0]._id).to.be.a('object')
-              expect(data[0].menuId).to.be.a('object')
-              expect(data[0].quantity).to.be.a('number')
-              expect(data[0].isReady).to.be.false
+              expect(item._id).to.be.a('object')
+              expect(item.menuId).to.be.a('object')
+              expect(item.quantity).to.be.a('number')
+              expect(item.isReady).to.be.false
             })
 
             done()
@@ -191,6 +191,73 @@ describe('Data', function () {
 
     })
 
+    describe('Get Restaurant Summary', function () {
+
+      it('Get Restaurant Summary Food Success', function (done) {
+        RestaurantController.getSummaryOrderFood(DummyData.idRestaurant)
+          .then((data) => {
+            // console.log(data)
+            expect(data).to.be.an('array')
+
+            data.forEach((item) => {
+              expect(item).to.have.property('name')
+              expect(item).to.have.property('quantity')
+
+              expect(item.name).to.be.a('string')
+              expect(item.quantity).to.be.a('number')
+            })
+            
+            done()
+          })
+          .catch((err) => {
+            console.error('Get Restaurant Summary', err)
+          })
+      }).timeout(0)
+
+      it('Get Restaurant Summary Food Category Success', function (done) {
+        RestaurantController.getSummaryOrderCategory(DummyData.idRestaurant)
+          .then((data) => {
+            expect(data).to.be.an('array')
+
+            data.forEach((item) => {
+              expect(item).to.have.property('category')
+              expect(item).to.have.property('quantity')
+
+              expect(item.category).to.be.a('string')
+              expect(item.quantity).to.be.a('number')
+            })
+            
+            done()
+          })
+          .catch((err) => {
+            console.error('Get Restaurant Summary', err)
+          })
+      }).timeout(0)
+
+      it('Get Restaurant Summary Food Bad Request (without restaurant id)', function (done) {
+        RestaurantController.getSummaryOrderFood()
+          .catch((err) => {
+            // console.error('error', err)
+            expect(err).to.have.property('message')
+            expect(err.message).to.equal('Bad Request')
+  
+            done()
+          })
+      }).timeout(0)
+  
+      it('Get Restaurant Summary Food Category Bad Request (without restaurant id)', function (done) {
+        RestaurantController.getSummaryOrderCategory()
+          .catch((err) => {
+            // console.error('error', err)
+            expect(err).to.have.property('message')
+            expect(err.message).to.equal('Bad Request')
+  
+            done()
+          })
+      }).timeout(0)
+
+    })
+
   })
 
 })
@@ -246,24 +313,24 @@ describe('Cached', function () {
     it('Create Restaurant Cached Failed', function (done) {
       CachedController.getClient().quit()
       CachedController.saveRestaurant(exampleRestaurant)
-      .catch((err) => {
-        // console.error('error', err)
-        expect(err).to.have.property('code')
+        .catch((err) => {
+          // console.error('error', err)
+          expect(err).to.have.property('code')
 
-        done()
-      })
+          done()
+        })
 
     }).timeout(0)
 
     it('Get Restaurant Cached Failed', function (done) {
       CachedController.getClient().quit()
       CachedController.getRestaurant()
-      .catch((err) => {
-        // console.error('error', err)
-        expect(err).to.have.property('code')
+        .catch((err) => {
+          // console.error('error', err)
+          expect(err).to.have.property('code')
 
-        done()
-      })
+          done()
+        })
 
     }).timeout(0)
 
