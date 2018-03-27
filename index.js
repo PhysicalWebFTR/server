@@ -105,7 +105,6 @@ const createOrderCharacteristic = new bleno.Characteristic({
     console.log('Write Request..')
 
     let obj = JSON.parse(data.toString())
-    console.log('obj', obj)
 
     RestaurantController.createOrder(obj)
       .then((result) => {
@@ -115,7 +114,6 @@ const createOrderCharacteristic = new bleno.Characteristic({
         ///////////////////////////////////////////////////////////////////
 
         result.forEach((item) => {
-          console.log('item', item)
           RestaurantController.getOrder(item._id)
             .then((detailOrder) => {
               let newDetail = {
@@ -124,7 +122,6 @@ const createOrderCharacteristic = new bleno.Characteristic({
                 quantity: detailOrder.quantity,
                 isReady: detailOrder.isReady
               }
-              console.log('newDetail', newDetail)
               pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_ORDER_ADMIN, newDetail)
 
             })

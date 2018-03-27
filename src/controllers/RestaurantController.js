@@ -23,12 +23,10 @@ class RestaurantController {
     let validRequest = false
 
     if (validBody) {
-      console.log('controller', data)
       data.menuList.forEach((item) => {
 
         const orderData = {
-          // restaurant: data.idRestaurant,
-          table: data.idTable,
+          tableId: data.idTable,
           menuId: item._id,
           quantity: item.quantity,
           isReady: false
@@ -59,8 +57,6 @@ class RestaurantController {
   static getOrders(restaurantId) {
     if (!restaurantId) return Promise.reject({ message: 'Bad Request' })
     return Order.find({ 'restaurant': restaurantId })
-    // return Order.find()
-      // .populate('restaurant')
       .populate('tableId')
       .populate('menuId')
       .exec()
