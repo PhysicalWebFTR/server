@@ -114,9 +114,6 @@ const createOrderCharacteristic = new bleno.Characteristic({
 
         result.forEach((item) => {
           RestaurantController.getOrder(item._id)
-            .populate('tableId')
-            .populate('menuId')
-            .exec()
             .then((detailOrder) => {
               let newDetail = {
                 table: detailOrder.tableId,
