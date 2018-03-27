@@ -86,7 +86,6 @@ bleno.on('accept', function (clientAddress) {
           return CachedController.saveRestaurant(data)
             .then((statusSaved) => {
               pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_GET_DATA_RESTAURANT, data)
-              pusher.trigger(`${process.env.CHANNEL_NAME}`, constants.EVENT_ORDER_ADMIN, restaurant)
             })
             .catch((err) => {
               console.error('failed save restaurant', error)
@@ -121,6 +120,8 @@ const createOrderCharacteristic = new bleno.Characteristic({
       .then((result) => {
         console.log('Success Create Order', result)
         pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_ORDER, data)
+        pusher.trigger(process.env.CHANNEL_NAME, constants.EVENT_ORDER_ADMIN, data)
+        
         callback(this.RESULT_SUCCESS)
       })
       .catch((err) => {
