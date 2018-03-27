@@ -48,7 +48,7 @@ class RestaurantController {
   }
 
   static getOrder(orderId){
-    return Order.find({ '_id': orderId })
+    return Order.findOne({ '_id': orderId })
       .populate('tableId')
       .populate('menuId')
       .exec()
