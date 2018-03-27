@@ -3,7 +3,6 @@ const exampleOrder = {
   idTable: '5ab7bd43f36d2827509385a6',
   menuList: [{
     _id: '5ab7bfddf36d282750938637',
-    name: 'Christmas Pie',
     quantity: 2
   }]
 }
@@ -14,14 +13,12 @@ const failedOrderMenu = {
 const failedOrderTable = {
   menuList: [{
     _id: '5ab7bfddf36d282750938637',
-    name: 'Christmas Pie',
     quantity: 2
   }]
 }
 const failedOrderMenuId = {
-  table: '5ab7bd43f36d2827509385a6',
+  idTable: '5ab7bd43f36d2827509385a6',
   menuList: [{
-    name: 'Christmas Pie',
     quantity: 2
   }]
 }
@@ -29,7 +26,6 @@ const failedOrderMenuQty = {
   idTable: '5ab7bd43f36d2827509385a6',
   menuList: [{
     _id: '5ab7bfddf36d282750938637',
-    name: 'Christmas Pie',
   }]
 }
 

@@ -28,12 +28,11 @@ class RestaurantController {
           // restaurant: data.idRestaurant,
           table: data.idTable,
           menuId: item._id,
-          name: item.name,
           quantity: item.quantity,
           isReady: false
         }
 
-        if (orderData.menuId && orderData.name && orderData.quantity) {
+        if (orderData.menuId && orderData.quantity) {
           arrPromise.push(new Order(orderData).save())
         }
         else return validBody = false
