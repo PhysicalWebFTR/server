@@ -23,7 +23,9 @@ class RestaurantController {
     let validRequest = false
 
     if (validBody) {
+      console.log('controller', data)
       data.menuList.forEach((item) => {
+
         const orderData = {
           // restaurant: data.idRestaurant,
           table: data.idTable,
