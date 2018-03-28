@@ -130,7 +130,7 @@ const createOrderCharacteristic = new bleno.Characteristic({
             })
         })
 
-        // callback(this.RESULT_SUCCESS)
+        callback(this.RESULT_SUCCESS)
       })
       .catch((err) => {
         console.error('Failed Create Order', err)

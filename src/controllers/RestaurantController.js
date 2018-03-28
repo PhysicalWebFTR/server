@@ -26,6 +26,7 @@ class RestaurantController {
       data.menuList.forEach((item) => {
 
         const orderData = {
+          restaurant: data.idRestaurant,
           tableId: data.idTable,
           menuId: item._id,
           quantity: item.quantity,
